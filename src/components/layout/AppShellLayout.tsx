@@ -26,6 +26,8 @@ import {
   IconHome,
   IconCode,
   IconBook,
+  IconInfoCircle,
+  IconHelp,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -88,7 +90,7 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
       header={{ height: 60 }}
       navbar={{
         width: 280,
-        breakpoint: "sm",
+        breakpoint: "lg",
         collapsed: { mobile: !opened, desktop: true },
       }}
       padding="md"
@@ -102,7 +104,7 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
             <Burger
               opened={opened}
               onClick={toggle}
-              hiddenFrom="sm"
+              hiddenFrom="lg"
               size="sm"
               aria-label="Toggle navigation"
             />
@@ -119,8 +121,8 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
             </Button>
           </Group>
 
-          {/* Desktop Navigation - hidden on mobile */}
-          <Group gap="sm" visibleFrom="sm">
+          {/* Desktop Navigation - hidden on medium screens and below */}
+          <Group gap="sm" visibleFrom="lg">
             <Button
               component={Link}
               href="/smells"
@@ -138,6 +140,24 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
               leftSection={<IconBook size={16} />}
             >
               Docs
+            </Button>
+            <Button
+              component={Link}
+              href="/about"
+              variant="subtle"
+              size="sm"
+              leftSection={<IconInfoCircle size={16} />}
+            >
+              About
+            </Button>
+            <Button
+              component={Link}
+              href="/support"
+              variant="subtle"
+              size="sm"
+              leftSection={<IconHelp size={16} />}
+            >
+              Support
             </Button>
           </Group>
 
@@ -294,63 +314,38 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
         <AppShell.Section grow p="md" pt={0} component={ScrollArea}>
           <NavLink
             href="/"
+            label="Home"
+            leftSection={<IconHome size={16} />}
+            component={Link}
+            onClick={() => opened && toggle()}
+          />
+          <NavLink
+            href="/smells"
             label="Explore Smells"
             leftSection={<IconCode size={16} />}
             component={Link}
+            onClick={() => opened && toggle()}
           />
           <NavLink
             href="/docs"
             label="Documentation"
             leftSection={<IconBook size={16} />}
             component={Link}
+            onClick={() => opened && toggle()}
           />
           <NavLink
-            href="/smells"
-            label="All Code Smells"
-            leftSection={<IconCode size={16} />}
+            href="/about"
+            label="About"
+            leftSection={<IconInfoCircle size={16} />}
             component={Link}
+            onClick={() => opened && toggle()}
           />
           <NavLink
-            href="/categories"
-            label="Categories"
-            leftSection={<IconBook size={16} />}
+            href="/support"
+            label="Support"
+            leftSection={<IconHelp size={16} />}
             component={Link}
-          />
-          <NavLink
-            href="/difficulty"
-            label="Difficulty Levels"
-            leftSection={<IconCode size={16} />}
-            component={Link}
-          />
-          <NavLink
-            href="/tutorials"
-            label="Tutorials"
-            leftSection={<IconBook size={16} />}
-            component={Link}
-          />
-          <NavLink
-            href="/guides"
-            label="Refactoring Guides"
-            leftSection={<IconCode size={16} />}
-            component={Link}
-          />
-          <NavLink
-            href="/best-practices"
-            label="Best Practices"
-            leftSection={<IconBook size={16} />}
-            component={Link}
-          />
-          <NavLink
-            href="/community"
-            label="Community"
-            leftSection={<IconCode size={16} />}
-            component={Link}
-          />
-          <NavLink
-            href="/contribute"
-            label="Contribute"
-            leftSection={<IconBook size={16} />}
-            component={Link}
+            onClick={() => opened && toggle()}
           />
         </AppShell.Section>
 
@@ -385,17 +380,22 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
                 label="Profile"
                 leftSection={<IconUser size={16} />}
                 component={Link}
+                onClick={() => opened && toggle()}
               />
               <NavLink
                 href="/settings"
                 label="Settings"
                 leftSection={<IconSettings size={16} />}
                 component={Link}
+                onClick={() => opened && toggle()}
               />
               <NavLink
                 label="Sign Out"
                 leftSection={<IconLogout size={16} />}
-                onClick={handleSignOut}
+                onClick={() => {
+                  handleSignOut();
+                  opened && toggle();
+                }}
                 c="red"
               />
             </>

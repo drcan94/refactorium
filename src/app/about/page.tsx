@@ -324,7 +324,7 @@ export default function AboutPage() {
               variant="light"
               leftSection={<IconMail size={20} />}
               component="a"
-              href="mailto:hello@refactorium.dev"
+              href="mailto:drcan94@gmail.com"
             >
               Email
             </Button>
@@ -340,6 +340,9 @@ export default function AboutPage() {
           </Anchor>
           <Anchor href="/smells" size="sm">
             Explore Smells
+          </Anchor>
+          <Anchor href="/support" size="sm">
+            Support
           </Anchor>
           <Anchor href="/settings" size="sm">
             Settings

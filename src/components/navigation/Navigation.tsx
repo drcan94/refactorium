@@ -20,6 +20,7 @@ import {
   IconCode,
   IconBook,
   IconInfoCircle,
+  IconHelp,
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -117,6 +118,15 @@ export function Navigation() {
             leftSection={<IconInfoCircle size={16} />}
           >
             About
+          </Button>
+          <Button
+            component={Link}
+            href="/support"
+            variant="subtle"
+            size="sm"
+            leftSection={<IconHelp size={16} />}
+          >
+            Support
           </Button>
         </Group>
       </Group>
