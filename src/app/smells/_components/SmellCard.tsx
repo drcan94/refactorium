@@ -10,8 +10,16 @@ import {
   Button,
   ActionIcon,
   Box,
+  Menu,
 } from "@mantine/core";
-import { IconHeart, IconStar, IconExternalLink } from "@tabler/icons-react";
+import {
+  IconHeart,
+  IconStar,
+  IconExternalLink,
+  IconEdit,
+  IconTrash,
+  IconDots,
+} from "@tabler/icons-react";
 import Link from "next/link";
 import { SmellWithCounts } from "@/lib/types";
 import {
@@ -30,6 +38,10 @@ interface SmellCardProps {
   onFavoriteToggle?: (smellId: string) => void;
   onProgressToggle?: (smellId: string) => void;
   showAuthButtons?: boolean;
+  showEditButtons?: boolean;
+  onEdit?: (smellId: string) => void;
+  onDelete?: (smellId: string) => void;
+  currentUserId?: string;
 }
 
 export function SmellCard({
@@ -41,6 +53,10 @@ export function SmellCard({
   onFavoriteToggle,
   onProgressToggle,
   showAuthButtons = true,
+  showEditButtons = false,
+  onEdit,
+  onDelete,
+  currentUserId,
 }: SmellCardProps) {
   const tags = smell.tags.split(",").map((tag) => tag.trim());
 
@@ -72,44 +88,72 @@ export function SmellCard({
               </Badge>
             </Group>
           </Box>
-          {showAuthButtons && (
-            <Group gap="xs">
-              <ActionIcon
-                variant={isInProgress ? "filled" : "light"}
-                color={isInProgress ? "orange" : "gray"}
-                onClick={() => onProgressToggle?.(smell.id)}
-                loading={isProgressLoading}
-                size="lg"
-                title={
-                  isInProgress ? "Remove from progress" : "Add to progress"
-                }
-              >
-                <IconStar
-                  size={18}
-                  fill={isInProgress ? "white" : "none"}
-                  stroke={isInProgress ? "white" : "currentColor"}
-                  strokeWidth={isInProgress ? 0 : 1.5}
-                />
-              </ActionIcon>
-              <ActionIcon
-                variant={isFavorited ? "filled" : "light"}
-                color={isFavorited ? "red" : "gray"}
-                onClick={() => onFavoriteToggle?.(smell.id)}
-                loading={isFavoriteLoading}
-                size="lg"
-                title={
-                  isFavorited ? "Remove from favorites" : "Add to favorites"
-                }
-              >
-                <IconHeart
-                  size={18}
-                  fill={isFavorited ? "white" : "none"}
-                  stroke={isFavorited ? "white" : "currentColor"}
-                  strokeWidth={isFavorited ? 0 : 1.5}
-                />
-              </ActionIcon>
-            </Group>
-          )}
+          <Group gap="xs">
+            {showAuthButtons && (
+              <>
+                <ActionIcon
+                  variant={isInProgress ? "filled" : "light"}
+                  color={isInProgress ? "orange" : "gray"}
+                  onClick={() => onProgressToggle?.(smell.id)}
+                  loading={isProgressLoading}
+                  size="lg"
+                  title={
+                    isInProgress ? "Remove from progress" : "Add to progress"
+                  }
+                >
+                  <IconStar
+                    size={18}
+                    fill={isInProgress ? "white" : "none"}
+                    stroke={isInProgress ? "white" : "currentColor"}
+                    strokeWidth={isInProgress ? 0 : 1.5}
+                  />
+                </ActionIcon>
+                <ActionIcon
+                  variant={isFavorited ? "filled" : "light"}
+                  color={isFavorited ? "red" : "gray"}
+                  onClick={() => onFavoriteToggle?.(smell.id)}
+                  loading={isFavoriteLoading}
+                  size="lg"
+                  title={
+                    isFavorited ? "Remove from favorites" : "Add to favorites"
+                  }
+                >
+                  <IconHeart
+                    size={18}
+                    fill={isFavorited ? "white" : "none"}
+                    stroke={isFavorited ? "white" : "currentColor"}
+                    strokeWidth={isFavorited ? 0 : 1.5}
+                  />
+                </ActionIcon>
+              </>
+            )}
+            {showEditButtons &&
+              currentUserId &&
+              smell.authorId === currentUserId && (
+                <Menu shadow="md" width={200}>
+                  <Menu.Target>
+                    <ActionIcon variant="light" color="gray" size="lg">
+                      <IconDots size={18} />
+                    </ActionIcon>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Item
+                      leftSection={<IconEdit size={16} />}
+                      onClick={() => onEdit?.(smell.id)}
+                    >
+                      Edit
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<IconTrash size={16} />}
+                      color="red"
+                      onClick={() => onDelete?.(smell.id)}
+                    >
+                      Delete
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              )}
+          </Group>
         </Group>
 
         {/* Description */}

@@ -56,7 +56,9 @@ export default function SmellDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [isInProgress, setIsInProgress] = useState(false);
   const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [progressLoading, setProgressLoading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -84,6 +86,39 @@ export default function SmellDetailPage() {
       fetchSmell();
     }
   }, [params.id]);
+
+  // Fetch user's favorites and progress status
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!session?.user?.id || !smell) return;
+
+      try {
+        // Fetch favorites
+        const favoritesResponse = await fetch("/api/user/favorites");
+        if (favoritesResponse.ok) {
+          const favoritesData = await favoritesResponse.json();
+          const userFavorites =
+            favoritesData.favorites?.map((f: any) => f.smell?.id || f.id) || [];
+          setIsFavorited(userFavorites.includes(smell.id));
+        }
+
+        // Fetch progress
+        const progressResponse = await fetch("/api/user/progress");
+        if (progressResponse.ok) {
+          const progressData = await progressResponse.json();
+          const userProgress =
+            progressData.progress?.map((p: any) => p.smell?.id || p.id) || [];
+          setIsInProgress(userProgress.includes(smell.id));
+        }
+      } catch (err) {
+        console.error("Failed to fetch user data:", err);
+      }
+    };
+
+    if (session?.user?.id && smell) {
+      fetchUserData();
+    }
+  }, [session?.user?.id, smell]);
 
   const handleFavoriteToggle = async () => {
     if (!smell || !session?.user?.id) return;
@@ -119,6 +154,7 @@ export default function SmellDetailPage() {
   ) => {
     if (!smell || !session?.user?.id) return;
 
+    setProgressLoading(true);
     try {
       const response = await fetch("/api/user/progress", {
         method: "POST",
@@ -127,16 +163,20 @@ export default function SmellDetailPage() {
         },
         body: JSON.stringify({
           smellId: smell.id,
-          status: progressStatus,
+          action: progressStatus === "started" ? "add" : "remove",
         }),
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        setIsInProgress(progressStatus === "started");
+      } else {
         const data = await response.json();
         console.error("Failed to update progress:", data.error);
       }
     } catch (err) {
       console.error("Failed to update progress:", err);
+    } finally {
+      setProgressLoading(false);
     }
   };
 
@@ -256,21 +296,16 @@ export default function SmellDetailPage() {
           {session?.user?.id ? (
             <Group gap="sm">
               <Button
-                variant="light"
+                variant={isInProgress ? "filled" : "light"}
+                color={isInProgress ? "orange" : "gray"}
                 size="sm"
                 leftSection={<IconCode size={16} />}
-                onClick={() => handleProgressUpdate("started")}
+                onClick={() =>
+                  handleProgressUpdate(isInProgress ? "completed" : "started")
+                }
+                loading={progressLoading}
               >
-                Mark as Started
-              </Button>
-              <Button
-                variant="light"
-                color="green"
-                size="sm"
-                leftSection={<IconCheck size={16} />}
-                onClick={() => handleProgressUpdate("completed")}
-              >
-                Mark as Completed
+                {isInProgress ? "Mark as Completed" : "Mark as Started"}
               </Button>
             </Group>
           ) : (

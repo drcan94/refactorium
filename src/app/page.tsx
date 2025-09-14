@@ -37,6 +37,7 @@ import {
   getCategoryLabel,
   getDifficultyLabel,
 } from "@/lib/constants";
+import { SmellCard } from "./smells/_components/SmellCard";
 
 import styles from "./page.module.css";
 
@@ -453,82 +454,7 @@ export default function Home() {
         ) : (
           filteredSmells.map((smell) => (
             <Grid.Col key={smell.id} span={{ base: 12, sm: 6, md: 4 }}>
-              <Card shadow="sm" padding="lg" radius="md" withBorder h="100%">
-                <Stack gap="sm" h="100%">
-                  <Group justify="space-between" align="flex-start">
-                    <Title order={3} size="h4" lineClamp={2}>
-                      {smell.title}
-                    </Title>
-                    {session && (
-                      <Group gap="xs">
-                        <ActionIcon
-                          variant="light"
-                          color="gray"
-                          size="sm"
-                          title="Favorites"
-                        >
-                          <IconHeart size={14} />
-                        </ActionIcon>
-                        <ActionIcon
-                          variant="light"
-                          color="gray"
-                          size="sm"
-                          title="In Progress"
-                        >
-                          <IconStar size={14} />
-                        </ActionIcon>
-                      </Group>
-                    )}
-                  </Group>
-
-                  <Badge color="blue" variant="light" size="sm">
-                    {getCategoryLabel(smell.category)}
-                  </Badge>
-
-                  <Text size="sm" c="dimmed" lineClamp={3} style={{ flex: 1 }}>
-                    {smell.description}
-                  </Text>
-
-                  <Group justify="space-between" align="center">
-                    <Group gap="xs">
-                      {Array.from({
-                        length: getDifficultyStars(smell.difficulty),
-                      }).map((_, i) => (
-                        <IconStar key={i} size={14} fill="currentColor" />
-                      ))}
-                      {Array.from({
-                        length: 5 - getDifficultyStars(smell.difficulty),
-                      }).map((_, i) => (
-                        <IconStar
-                          key={i + getDifficultyStars(smell.difficulty)}
-                          size={14}
-                        />
-                      ))}
-                    </Group>
-                    <Button
-                      variant="light"
-                      size="xs"
-                      key={`learn-${smell.id}`}
-                      component="a"
-                      href={`/smells/${smell.id}`}
-                    >
-                      Learn More
-                    </Button>
-                  </Group>
-
-                  {/* Tags */}
-                  <Group gap="xs" mt="xs">
-                    {smell.tags
-                      .split(",")
-                      .slice(0, 3)
-                      .map((tag) => (
-                        <Badge key={tag.trim()} size="xs" variant="outline">
-                          {tag.trim()}
-                        </Badge>
-                      ))}
-                  </Group>
-                </Stack>
-              </Card>
+              <SmellCard smell={smell} showAuthButtons={false} />
             </Grid.Col>
           ))
         )}

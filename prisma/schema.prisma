@@ -103,6 +103,7 @@ model User {
   progress      UserProgress[]
   preferences   UserPreferences?
   activities    UserActivity[]
+  smells        Smell[]        // Smells created by this user
 }
 
 model VerificationToken {
@@ -129,9 +130,11 @@ model Smell {
   testing     String?        // Testing guidelines
   examples    String?        // Code examples
   references  String?        // External references
+  authorId    String?        @db.Uuid // Author of the smell
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
+  author      User?          @relation(fields: [authorId], references: [id], onDelete: SetNull)
   favorites   UserSmell[]
   progress    UserProgress[]
 }

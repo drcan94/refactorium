@@ -132,6 +132,17 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
             >
               Explore Smells
             </Button>
+            {status === "authenticated" && (
+              <Button
+                component={Link}
+                href="/smells/new"
+                variant="light"
+                size="sm"
+                leftSection={<IconCode size={16} />}
+              >
+                Create Smell
+              </Button>
+            )}
             <Button
               component={Link}
               href="/docs"
@@ -326,6 +337,15 @@ export function AppShellLayout({ children }: AppShellLayoutProps) {
             component={Link}
             onClick={() => opened && toggle()}
           />
+          {status === "authenticated" && (
+            <NavLink
+              href="/smells/new"
+              label="Create Smell"
+              leftSection={<IconCode size={16} />}
+              component={Link}
+              onClick={() => opened && toggle()}
+            />
+          )}
           <NavLink
             href="/docs"
             label="Documentation"

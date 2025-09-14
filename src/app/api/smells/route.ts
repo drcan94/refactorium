@@ -232,7 +232,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Create new smell (admin only - will add auth later)
+// Create new smell
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -246,10 +246,18 @@ export async function POST(request: NextRequest) {
       testHint: z.string().min(1),
       difficulty: z.nativeEnum(DifficultyLevel),
       tags: z.string(),
+      isPublished: z.boolean().optional().default(true),
+      problem: z.string().optional(),
+      solution: z.string().optional(),
+      testing: z.string().optional(),
+      examples: z.string().optional(),
+      references: z.string().optional(),
     });
 
     const validatedData = smellSchema.parse(body);
 
+    // Get user from session (you'll need to implement this)
+    // For now, we'll create without authorId
     const smell = await prisma.smell.create({
       data: validatedData,
     });

@@ -21,6 +21,7 @@ import { useUserFavorites, useUserProgress } from "@/lib/hooks/use-user-data";
 import { useFavoriteMutation } from "@/lib/hooks/use-favorites";
 import { useProgressMutation } from "@/lib/hooks/use-progress";
 import { IconRefresh } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 import {
   SmellCategory,
   DifficultyLevel,
@@ -30,6 +31,7 @@ import {
 import { SmellCard, Filters, Pagination } from "./_components";
 
 export default function SmellsPage() {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const { data: session, status: sessionStatus } = useSession();
@@ -240,6 +242,55 @@ export default function SmellsPage() {
     [filters]
   );
 
+  const handleEdit = useCallback(
+    (smellId: string) => {
+      router.push(`/smells/${smellId}/edit`);
+    },
+    [router]
+  );
+
+  const handleDelete = useCallback(
+    async (smellId: string) => {
+      if (
+        !confirm(
+          "Are you sure you want to delete this smell? This action cannot be undone."
+        )
+      ) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/smells/${smellId}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          notifications.show({
+            title: "Success",
+            message: "Smell deleted successfully!",
+            color: "green",
+          });
+          // Refresh the data
+          smellsQuery.refetch();
+        } else {
+          const error = await response.json();
+          notifications.show({
+            title: "Error",
+            message: error.error || "Failed to delete smell",
+            color: "red",
+          });
+        }
+      } catch (error) {
+        notifications.show({
+          title: "Error",
+          message: "Network error occurred",
+          color: "red",
+        });
+      }
+    },
+    [smellsQuery]
+  );
+
   if (!mounted || isInitialLoading) {
     return (
       <Container size="lg" py="xl">
@@ -341,6 +392,10 @@ export default function SmellsPage() {
                   onFavoriteToggle={handleFavoriteToggle}
                   onProgressToggle={handleProgressToggle}
                   showAuthButtons={!!session}
+                  showEditButtons={!!session}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  currentUserId={session?.user?.id}
                 />
               </Grid.Col>
             );
