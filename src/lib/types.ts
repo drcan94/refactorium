@@ -37,6 +37,7 @@ export type SmellWithCounts = Smell & {
     favorites: number;
     progress: number;
   };
+  authorId: string | null;
 };
 
 export type UserWithProfile = User & {

@@ -74,6 +74,7 @@ function calculateDiscount(price: number, userType: UserType): number {
       "Test with different discount rates and user types. Verify constants are used correctly.",
     createdAt: new Date(),
     updatedAt: new Date(),
+    authorId: null,
     _count: { favorites: 12, progress: 8 },
   },
   {
@@ -117,6 +118,7 @@ function createUser(userData: UserData): User {
       "Test with different combinations of user data. Verify the object structure is maintained.",
     createdAt: new Date(),
     updatedAt: new Date(),
+    authorId: null,
     _count: { favorites: 15, progress: 6 },
   },
 ];
